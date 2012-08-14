@@ -1,3 +1,6 @@
+Added new functionality. Now we can find music by <b>user's id</b>.
+Install and using stay the same.
+======
 !!! NOTES
 
 Fixed compatibility with 2.90.1 (Ubuntu 11.10), but lost a lot of functionality and support for previous versions.

@@ -27,20 +27,31 @@ class VkontakteSource(RB.Source):
     self.entry_view = entry_view
 
     search_entry = Gtk.Entry()
-    search_entry.set_width_chars(100)
+    search_entry.set_width_chars(20)
     search_entry.set_activates_default(True)
 
+    search_by_name = Gtk.Entry()
+    search_by_name.set_width_chars(20)
+    search_by_name.set_activates_default(False)
+
     self.search_entry = search_entry
+    self.search_by_name = search_by_name
 
     search_button = Gtk.Button("Search")
     search_button.connect("clicked", self.on_search_button_clicked)
+    search_button_by_name = Gtk.Button("Search User's Music")
+    search_button_by_name.connect("clicked", self.on_search_button_clicked_by_name)
 
     search_button.set_can_default(True)
     self.search_button = search_button
+    search_button_by_name.set_can_default(False)
+    self.search_button_by_name = search_button_by_name
 
     hbox = Gtk.HBox()
     hbox.pack_start(search_entry, False, False, 0)
     hbox.pack_start(search_button, False, False, 5)
+    hbox.pack_start(search_by_name, False, False, 5)
+    hbox.pack_start(search_button_by_name, False, False, 5)
 
     vbox = Gtk.VBox()
     vbox.pack_start(hbox, False, False, 0)
@@ -110,6 +121,14 @@ class VkontakteSource(RB.Source):
       search = VkontakteSearch(entry.get_text(), self.props.shell.props.db, self.props.entry_type)
       # Start the search asynchronously
       GLib.idle_add(search.start, priority=GLib.PRIORITY_HIGH_IDLE)
+      self.props.query_model = search.query_model
+      self.entry_view.set_model(self.props.query_model)
+
+  def on_search_button_clicked_by_name(self, button):
+    entry = self.search_by_name
+    if entry.get_text():
+      search = VkontakteSearch(entry.get_text(), self.props.shell.props.db, self.props.entry_type)
+      GLib.idle_add(search.start_by_name, priority=GLib.PRIORITY_HIGH_IDLE)
       self.props.query_model = search.query_model
       self.entry_view.set_model(self.props.query_model)
 

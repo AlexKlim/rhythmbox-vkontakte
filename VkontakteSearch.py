@@ -45,7 +45,11 @@ class VkontakteSearch:
 	def make_sig(self, method, query):
 		str = "%sapi_id=%scount=300method=%sq=%stest_mode=1v=2.0%s" % (USER_ID, APP_ID, method, query, SECRET_KEY)
 		return hashlib.md5(str).hexdigest()
-		
+
+	def make_sig_by_name(self, method, query):
+		str = "%sapi_id=%scount=300method=%stest_mode=1uid=%sv=2.0%s" % (USER_ID, APP_ID, method, query, SECRET_KEY)
+		return hashlib.md5(str).hexdigest()
+
 	def is_complete(self):
 		return self.search_complete
 	
@@ -82,5 +86,11 @@ class VkontakteSearch:
 	def start(self):
 		sig = self.make_sig('audio.search', self.search_term)
 		path = "http://api.vk.com/api.php?api_id=%s&count=300&v=2.0&method=audio.search&sig=%s&test_mode=1&q=%s" % (APP_ID, sig, urllib2.quote(self.search_term))
+		loader = rb.Loader()
+		loader.get_url(path, self.on_search_results_recieved)
+
+	def start_by_name(self):
+		sig = self.make_sig_by_name('audio.get', self.search_term)
+		path = "http://api.vk.com/api.php?api_id=%s&count=300&v=2.0&method=audio.get&sig=%s&test_mode=1&uid=%s" % (APP_ID, sig, urllib2.quote(self.search_term))
 		loader = rb.Loader()
 		loader.get_url(path, self.on_search_results_recieved)
